@@ -1,0 +1,30 @@
+plugins {
+    id 'groovy'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy:3.0.8'
+    implementation 'org.codehaus.groovy:groovy-json:3.0.8'
+
+    implementation 'org.codehaus.groovy:groovy-xml:3.0.8'
+    implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
+
+    implementation 'com.sparkjava:spark-core:2.9.3'
+
+    testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+    testImplementation 'com.tomtom.http:goji-http-client:2.0.0'
+}
+
+test {
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+    testLogging {
+        showStandardStreams true
+        events 'FAILED'
+        exceptionFormat 'full'
+    }
+}

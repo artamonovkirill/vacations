@@ -1,0 +1,7 @@
+# Gradle
+.gradle
+build
+out/
+
+# Secrets
+src/main/resources/api.key
