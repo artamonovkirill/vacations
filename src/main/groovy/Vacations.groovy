@@ -12,11 +12,16 @@ class Vacations {
             def url = request.body().toURL()
             int min = request.queryParams("min")?.toInteger() ?: 0
 
-            def listings = Search.coordinates(url)
-            def elevatedListings = altitudes(listings)
+            try {
+                def listings = Search.coordinates(url)
+                def elevatedListings = altitudes(listings)
 
-            def matchingListings = elevatedListings.findAll { it.elevation >= min }
-            JsonOutput.toJson(["results": matchingListings, "total": matchingListings.size()])
-        })
+                def matchingListings = elevatedListings.findAll { it.elevation >= min }
+                JsonOutput.toJson(["results": matchingListings, "total": matchingListings.size()])
+            } catch (Exception e) {
+                println(e.message)
+                throw e
+            }
+         })
     }
 }
