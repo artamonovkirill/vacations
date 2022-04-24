@@ -7,15 +7,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy:3.0.10'
-    implementation 'org.codehaus.groovy:groovy-json:3.0.10'
+    implementation 'org.apache.groovy:groovy:4.0.2'
+    implementation 'org.apache.groovy:groovy-json:4.0.2'
 
-    implementation 'org.codehaus.groovy:groovy-xml:3.0.10'
+    implementation 'org.apache.groovy:groovy-xml:4.0.2'
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
     implementation 'com.sparkjava:spark-core:2.9.3'
 
-    testImplementation 'org.spockframework:spock-core:2.1-groovy-3.0'
+    testImplementation 'org.spockframework:spock-core:2.2-M1-groovy-4.0'
     testImplementation 'com.tomtom.http:goji-http-client:3.0.0'
 }
 
