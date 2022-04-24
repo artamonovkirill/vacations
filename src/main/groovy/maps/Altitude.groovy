@@ -12,7 +12,10 @@ class Altitude {
     static altitudes(List<Listing> listings) {
         def coordinates = listings.collect { "${it.lat},${it.lng}" }.join("|")
         def url = "https://maps.googleapis.com/maps/api/elevation/json?locations=${coordinates}&key=$key".toURL()
-        def elevations = slurper.parse(url).results
+        def response = slurper.parse(url)
+        if (response.error_message)
+            throw new RuntimeException(response.error_message)
+        def elevations = response.results
         listings.collect { listing ->
             def elevation = elevations.find { e -> e.location.lat == listing.lat && e.location.lng == listing.lng }.elevation
             elevatedListing(listing, elevation)
