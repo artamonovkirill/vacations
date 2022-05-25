@@ -13,9 +13,23 @@ class Search {
         def html = xmlSlurper.parse(search as String)
         String json = html.'**'.find { it.'@id' == 'data-state' }.text()
         def data = jsonSlurper.parseText(json)
-        return data.niobeMinimalClientData[1][1].data.presentation.explore.sections.sections*.section*.child*.section*.items*.listing
-                .flatten()
-                .findAll { it }
-                .collect { new Listing("https://www.airbnb.com/rooms/${it.id}".toURL(), it.lat, it.lng) }
+        return extract(data)
+    }
+
+    private static List<Listing> extract(data) {
+        switch (data) {
+            case Map:
+                if (data.containsKey('id')
+                        && data.containsKey('lat')
+                        && data.containsKey('lng')) {
+                    def url = "https://www.airbnb.com/rooms/${data.id}".toURL()
+                    return [new Listing(url, data.lat, data.lng)]
+                }
+                return data.collectMany { _, v -> extract(v) }
+            case List:
+                return data.collectMany {extract(it) }
+            default:
+                return []
+        }
     }
 }
