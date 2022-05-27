@@ -15,7 +15,6 @@ class Vacations {
             try {
                 def listings = Search.coordinates(url)
                 def elevatedListings = altitudes(listings)
-
                 def matchingListings = elevatedListings.findAll { it.elevation >= min }
                 JsonOutput.toJson(["results": matchingListings, "total": matchingListings.size()])
             } catch (Exception e) {

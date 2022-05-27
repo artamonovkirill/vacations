@@ -11,7 +11,9 @@ class Search {
 
     static List<Listing> coordinates(URL search) {
         def html = xmlSlurper.parse(search as String)
-        String json = html.'**'.find { it.'@id' == 'data-state' }.text()
+        String json = html.'**'.find {
+            it.text().startsWith('{') && it.text().contains('"lat"')
+        }.text()
         def data = jsonSlurper.parseText(json)
         return extract(data)
     }
@@ -27,7 +29,7 @@ class Search {
                 }
                 return data.collectMany { _, v -> extract(v) }
             case List:
-                return data.collectMany {extract(it) }
+                return data.collectMany { extract(it) }
             default:
                 return []
         }
