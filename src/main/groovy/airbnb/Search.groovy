@@ -15,7 +15,7 @@ class Search {
             it.text().startsWith('{') && it.text().contains('"lat"')
         }.text()
         def data = jsonSlurper.parseText(json)
-        return extract(data)
+        return extract(data).unique {it.url }
     }
 
     private static List<Listing> extract(data) {
