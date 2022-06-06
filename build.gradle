@@ -8,9 +8,9 @@ repositories {
 
 dependencies {
     implementation 'org.apache.groovy:groovy:4.0.3'
-    implementation 'org.apache.groovy:groovy-json:4.0.2'
+    implementation 'org.apache.groovy:groovy-json:4.0.3'
 
-    implementation 'org.apache.groovy:groovy-xml:4.0.2'
+    implementation 'org.apache.groovy:groovy-xml:4.0.3'
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
     implementation 'com.sparkjava:spark-core:2.9.3'
