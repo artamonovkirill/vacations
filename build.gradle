@@ -7,20 +7,28 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:4.0.29'
-    implementation 'org.apache.groovy:groovy-json:4.0.29'
+    implementation 'org.apache.groovy:groovy:5.0.3'
+    implementation 'org.apache.groovy:groovy-json:5.0.3'
 
-    implementation 'org.apache.groovy:groovy-xml:4.0.29'
+    implementation 'org.apache.groovy:groovy-xml:5.0.3'
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
-    implementation 'com.sparkjava:spark-core:2.9.4'
+    implementation 'io.javalin:javalin:6.7.0'
+    implementation 'org.slf4j:slf4j-simple:2.0.16'
 
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+    testImplementation 'org.spockframework:spock-core:2.4-M7-groovy-5.0'
     testImplementation 'com.tomtom.http:goji-http-client:3.3.0'
 }
 
+testing {
+    suites {
+        test {
+            useJUnitJupiter()
+        }
+    }
+}
+
 test {
-    useJUnitPlatform()
     outputs.upToDateWhen { false }
     testLogging {
         showStandardStreams true

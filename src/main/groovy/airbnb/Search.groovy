@@ -15,23 +15,25 @@ class Search {
             it.text().startsWith('{') && it.text().contains('"lat"')
         }.text()
         def data = jsonSlurper.parseText(json)
-        return extract(data).unique {it.url }
-    }
 
-    private static List<Listing> extract(data) {
-        switch (data) {
-            case Map:
-                if (data.containsKey('id')
-                        && data.containsKey('lat')
-                        && data.containsKey('lng')) {
-                    def url = "https://www.airbnb.com/rooms/${data.id}".toURL()
-                    return [new Listing(url, data.lat, data.lng)]
-                }
-                return data.collectMany { _, v -> extract(v) }
-            case List:
-                return data.collectMany { extract(it) }
-            default:
-                return []
+        def searchResults = data?.niobeClientData?.get(0)?.get(1)?.data?.presentation?.staysSearch?.results?.searchResults
+
+        if (!searchResults) {
+            return []
         }
+
+        return searchResults.collect { result ->
+            def listing = result.demandStayListing
+            if (listing?.id && listing?.location?.coordinate) {
+                def decodedId = new String(listing.id.decodeBase64())
+                def numericId = decodedId.split(':')[1]
+
+                def url = "https://www.airbnb.com/rooms/${numericId}".toURL()
+                def lat = listing.location.coordinate.latitude
+                def lng = listing.location.coordinate.longitude
+                return new Listing(url, lat, lng)
+            }
+            return null
+        }.findAll { it != null }.unique { it.url }
     }
 }
