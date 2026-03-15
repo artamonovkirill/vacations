@@ -7,10 +7,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:5.0.3'
-    implementation 'org.apache.groovy:groovy-json:5.0.3'
+    implementation 'org.apache.groovy:groovy:5.0.4'
+    implementation 'org.apache.groovy:groovy-json:5.0.4'
 
-    implementation 'org.apache.groovy:groovy-xml:5.0.3'
+    implementation 'org.apache.groovy:groovy-xml:5.0.4'
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
     implementation 'io.javalin:javalin:6.7.0'
