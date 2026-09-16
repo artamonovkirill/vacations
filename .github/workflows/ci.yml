@@ -13,4 +13,4 @@ jobs:
           java-version: 25
           distribution: temurin
           cache: gradle
-      - run: ./gradlew test --tests AirbnbParsingSpec
+      - run: ./gradlew test --tests HealthSpec --tests AirbnbParsingSpec

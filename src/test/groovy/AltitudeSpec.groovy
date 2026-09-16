@@ -1,22 +1,6 @@
-import com.tomtom.http.HttpClient
-import spock.lang.Specification
-import spock.util.concurrent.PollingConditions
-
 import static com.tomtom.http.response.ResponseCode.OK
 
-class AltitudeSpec extends Specification {
-    def http = new HttpClient(baseUrl: 'http://localhost:4567')
-
-    def setupSpec() {
-        Vacations.main()
-
-        def conditions = new PollingConditions(timeout: 5, initialDelay: 0.1, delay: 0.1)
-        conditions.eventually {
-            def response = new HttpClient(baseUrl: 'http://localhost:4567').get(path: '/health')
-            assert response.statusCode == OK
-        }
-    }
-
+class AltitudeSpec extends ServerSpec {
     def 'finds all search altitudes'() {
         when:
         def response = http.post(
