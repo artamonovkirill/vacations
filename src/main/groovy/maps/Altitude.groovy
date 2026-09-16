@@ -7,12 +7,21 @@ import static maps.ElevatedListing.elevatedListing
 
 class Altitude {
     static final slurper = new JsonSlurper()
-    static final key = new File("src/main/resources/api.key").text
+    static final key = System.getenv('GOOGLE_MAPS_API_KEY') ?:
+            { throw new IllegalStateException('GOOGLE_MAPS_API_KEY is not set') }()
+
+    private static String redacted(String message) {
+        message?.replace(key, '<redacted>') ?: 'no message'
+    }
 
     static altitudes(List<Listing> listings) {
         def coordinates = listings.collect { "${it.lat},${it.lng}" }.join("|")
-        def url = "https://maps.googleapis.com/maps/api/elevation/json?locations=${coordinates}&key=$key".toURL()
-        def response = slurper.parse(url)
+        def response
+        try {
+            response = slurper.parseText("https://maps.googleapis.com/maps/api/elevation/json?locations=$coordinates&key=$key".toURL().text)
+        } catch (Exception e) {
+            throw new RuntimeException(redacted(e.message))
+        }
         if (response.error_message)
             throw new RuntimeException(response.error_message)
         def elevations = response.results
