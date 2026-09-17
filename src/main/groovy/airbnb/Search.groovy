@@ -2,6 +2,7 @@ package airbnb
 
 import groovy.json.JsonSlurper
 import groovy.xml.XmlSlurper
+import groovy.xml.slurpersupport.GPathResult
 import org.ccil.cowan.tagsoup.Parser
 
 class Search {
@@ -9,31 +10,39 @@ class Search {
     static final xmlSlurper = new XmlSlurper(parser)
     static final jsonSlurper = new JsonSlurper()
 
-    static List<Listing> coordinates(URL search) {
-        def html = xmlSlurper.parse(search as String)
-        String json = html.'**'.find {
-            it.text().startsWith('{') && it.text().contains('"lat"')
-        }.text()
-        def data = jsonSlurper.parseText(json)
+    static List<Listing> coordinates(URL searchURL) {
+        def html = xmlSlurper.parse(searchURL as String)
+        def embedded = html.'**'.find {
+            it.name() == 'script' && it.text().startsWith('{') && it.text().contains('"lat"')
+        } as GPathResult
+        if (!embedded) throw new IllegalStateException("No embedded JSON in $searchURL")
 
-        def searchResults = data?.niobeClientData?.get(0)?.get(1)?.data?.presentation?.staysSearch?.results?.searchResults
+        def data = jsonSlurper.parseText(embedded.text())
 
-        if (!searchResults) {
-            return []
+        def staysSearches = valuesOf(data, 'staysSearch')
+        if (staysSearches.size() != 1)
+            throw new IllegalStateException(
+                    "Expected 1 staysSearch in $searchURL, found ${staysSearches.size()}")
+
+        def mapSearchResults = staysSearches[0]['mapResults']['mapSearchResults'] as List
+        return mapSearchResults.findResults { searchResult ->
+            def listing = searchResult['demandStayListing']
+            def coordinate = listing['location']['coordinate']
+
+            def id = new String(listing['id'].toString().decodeBase64()).split(':')[1]
+            return new Listing("https://www.airbnb.com/rooms/$id".toURL(),
+                    coordinate['latitude'] as double,
+                    coordinate['longitude'] as double)
         }
+    }
 
-        return searchResults.collect { result ->
-            def listing = result.demandStayListing
-            if (listing?.id && listing?.location?.coordinate) {
-                def decodedId = new String(listing.id.decodeBase64())
-                def numericId = decodedId.split(':')[1]
-
-                def url = "https://www.airbnb.com/rooms/${numericId}".toURL()
-                def lat = listing.location.coordinate.latitude
-                def lng = listing.location.coordinate.longitude
-                return new Listing(url, lat, lng)
-            }
-            return null
-        }.findAll { it != null }.unique { it.url }
+    private static List valuesOf(node, String key) {
+        if (node instanceof Map) {
+            def here = node[key] != null ? [node[key]] : []
+            return here + node.values().collectMany { valuesOf(it, key) }
+        }
+        if (node instanceof List)
+            return node.collectMany { valuesOf(it, key) }
+        return []
     }
 }
