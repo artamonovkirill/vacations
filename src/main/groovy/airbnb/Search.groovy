@@ -13,7 +13,9 @@ class Search {
     static List<Listing> coordinates(URL searchURL) {
         def html = xmlSlurper.parse(searchURL as String)
         def embedded = html.'**'.find {
-            it.name() == 'script' && it.text().startsWith('{') && it.text().contains('"lat"')
+            if (it.name() != 'script') return false
+            def text = it.text()
+            text.startsWith('{') && text.contains('"lat"')
         } as GPathResult
         if (!embedded) throw new IllegalStateException("No embedded JSON in $searchURL")
 
