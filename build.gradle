@@ -13,7 +13,7 @@ dependencies {
     implementation 'org.apache.groovy:groovy-xml:6.0.0'
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
-    implementation 'io.javalin:javalin:7.2.3'
+    implementation 'io.javalin:javalin:7.2.4'
     implementation 'org.slf4j:slf4j-simple:2.0.20'
 
     testImplementation 'org.spockframework:spock-core:2.5-groovy-6.0'
